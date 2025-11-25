@@ -1,0 +1,46 @@
+name: Google Cloud Function Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Functions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 1. Auth ke GCP
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      # 2. Setup gcloud
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      # 3. Deploy Cloud Function Gen 2
+      - name: Deploy Cloud Function (Gen 2)
+        run: |
+          gcloud functions deploy dashboard \
+            --region=asia-southeast2 \
+            --runtime=go125 \
+            --gen2 \
+            --source=. \
+            --entry-point=dashboard \
+            --trigger-http \
+            --allow-unauthenticated \
+            --timeout=540s \
+            --service-account=renz-cloud@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com \
+            --set-env-vars "MONGO_URI=${{ secrets.MONGO_URI }},JWT_SECRET=${{ secrets.JWT_SECRET }}, ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}, SERVER_PORT=${{ secrets.SERVER_PORT }}, DATABASE_NAME=${{ secrets.DATABASE_NAME }}"
+
+      # 4. Optional: Cek apakah function sudah berhasil
+      - name: Check Function Exists
+        run: gcloud functions describe sakha --region=asia-southeast2
