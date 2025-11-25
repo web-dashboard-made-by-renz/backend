@@ -11,21 +11,8 @@ import (
 
 func SetupRouter(cfg *config.Config, colorisHandler *ColorisHandler, trainingHandler *TrainingHandler, selloutHandler *SelloutHandler, authHandler *AuthHandler) *gin.Engine {
 	router := gin.Default()
-
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{cfg.AllowedOrigins},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
-
-	router.MaxMultipartMemory = 32 << 20
-
-	api := router.Group("/api/v1")
-	{
-		api.GET("/health", func(c *gin.Context) {
+	registerRoutes := func(group *gin.RouterGroup) {
+		group.GET("/health", func(c *gin.Context) {
 			c.JSON(200, gin.H{
 				"status":  "ok",
 				"message": "Backend Dashboard API is running",
@@ -33,14 +20,14 @@ func SetupRouter(cfg *config.Config, colorisHandler *ColorisHandler, trainingHan
 		})
 
 		// Auth routes (public)
-		auth := api.Group("/auth")
+		auth := group.Group("/auth")
 		{
 			auth.POST("/login", authHandler.Login)
 			auth.GET("/verify", middleware.AuthMiddleware(cfg.JWTSecret), authHandler.Verify)
 		}
 
 		// Protected routes
-		protected := api.Group("")
+		protected := group.Group("")
 		protected.Use(middleware.AuthMiddleware(cfg.JWTSecret))
 		{
 			coloris := protected.Group("/coloris")
@@ -77,6 +64,28 @@ func SetupRouter(cfg *config.Config, colorisHandler *ColorisHandler, trainingHan
 			}
 		}
 	}
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{cfg.AllowedOrigins},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	router.MaxMultipartMemory = 32 << 20
+
+	// Default API prefix
+	apiV1 := router.Group("/api/v1")
+	registerRoutes(apiV1)
+
+	// Cloud Functions adds the function name as path prefix (e.g. /dashboard/*),
+	// so expose the same routes under that prefix to avoid 404s.
+	funcPrefixed := router.Group("/dashboard")
+	registerRoutes(funcPrefixed)
+	funcPrefixedV1 := router.Group("/dashboard/api/v1")
+	registerRoutes(funcPrefixedV1)
 
 	return router
 }
