@@ -411,39 +411,40 @@ func ParseExcelToSellout(file *excelize.File) ([]models.Sellout, error) {
 			continue
 		}
 
-		if len(row) < 11 {
+		// minimal 18 kolom sesuai header ekspor terbaru
+		if len(row) < 18 {
 			continue
 		}
 
 		tahun, _ := strconv.Atoi(row[0])
 		bulan, _ := strconv.Atoi(row[1])
 
-		// Debug logging
-		fmt.Printf("Row %d - Sellout TT Raw: '%s'\n", i, row[8])
-		fmt.Printf("Row %d - Sellout RM Raw: '%s'\n", i, row[9])
-		fmt.Printf("Row %d - Total Sellout Raw: '%s'\n", i, row[10])
-
-		// Parse dengan membersihkan separator ribuan dan whitespace
-		selloutTT := parseFloatFromExcel(row[8])
-		selloutRM := parseFloatFromExcel(row[9])
-		totalSellout := parseFloatFromExcel(row[10])
-
-		fmt.Printf("Row %d - Sellout TT Parsed: %.2f\n", i, selloutTT)
-		fmt.Printf("Row %d - Sellout RM Parsed: %.2f\n", i, selloutRM)
-		fmt.Printf("Row %d - Total Sellout Parsed: %.2f\n", i, totalSellout)
+		targetSellout := parseFloatFromExcel(row[13])
+		selloutTT := parseFloatFromExcel(row[14])
+		selloutRM := parseFloatFromExcel(row[15])
+		primafix := parseFloatFromExcel(row[16])
+		totalSellout := parseFloatFromExcel(row[17])
+		masaKerja := parseFloatFromExcel(row[10])
 
 		sellout := models.Sellout{
-			Tahun:        tahun,
-			Bulan:        bulan,
-			Reg:          row[2],
-			Cabang:       row[3],
-			Outlet:       row[4],
-			NamaColorist: row[5],
-			NoReg:        row[6],
-			CHL:          row[7],
-			SelloutTT:    selloutTT,
-			SelloutRM:    selloutRM,
-			TotalSellout: totalSellout,
+			Tahun:            tahun,
+			Bulan:            bulan,
+			Reg:              row[2],
+			Cabang:           row[3],
+			Outlet:           row[4],
+			AreaCover:        row[5],
+			MosSs:            row[6],
+			NamaColorist:     row[7],
+			NoReg:            row[8],
+			TanggalBergabung: row[9],
+			MasaKerja:        masaKerja,
+			CHL:              row[11],
+			Wilayah:          row[12],
+			TargetSellout:    targetSellout,
+			SelloutTT:        selloutTT,
+			SelloutRM:        selloutRM,
+			Primafix:         primafix,
+			TotalSellout:     totalSellout,
 		}
 
 		selloutData = append(selloutData, sellout)
