@@ -35,17 +35,24 @@ func NewSelloutService(repo repository.SelloutRepository) SelloutService {
 
 func (s *selloutService) CreateSellout(ctx context.Context, req *models.SelloutCreateRequest) error {
 	sellout := &models.Sellout{
-		Tahun:        req.Tahun,
-		Bulan:        req.Bulan,
-		Reg:          req.Reg,
-		Cabang:       req.Cabang,
-		Outlet:       req.Outlet,
-		NamaColorist: req.NamaColorist,
-		NoReg:        req.NoReg,
-		CHL:          req.CHL,
-		SelloutTT:    req.SelloutTT,
-		SelloutRM:    req.SelloutRM,
-		TotalSellout: req.TotalSellout,
+		Tahun:            req.Tahun,
+		Bulan:            req.Bulan,
+		Reg:              req.Reg,
+		Cabang:           req.Cabang,
+		Outlet:           req.Outlet,
+		AreaCover:        req.AreaCover,
+		MosSs:            req.MosSs,
+		NamaColorist:     req.NamaColorist,
+		NoReg:            req.NoReg,
+		TanggalBergabung: req.TanggalBergabung,
+		MasaKerja:        req.MasaKerja,
+		CHL:              req.CHL,
+		Wilayah:          req.Wilayah,
+		TargetSellout:    req.TargetSellout,
+		SelloutTT:        req.SelloutTT,
+		SelloutRM:        req.SelloutRM,
+		Primafix:         req.Primafix,
+		TotalSellout:     req.TotalSellout,
 	}
 
 	return s.repo.Create(ctx, sellout)
@@ -84,17 +91,24 @@ func (s *selloutService) GetAllSellout(ctx context.Context, page, perPage int) (
 
 func (s *selloutService) UpdateSellout(ctx context.Context, id string, req *models.SelloutCreateRequest) error {
 	sellout := &models.Sellout{
-		Tahun:        req.Tahun,
-		Bulan:        req.Bulan,
-		Reg:          req.Reg,
-		Cabang:       req.Cabang,
-		Outlet:       req.Outlet,
-		NamaColorist: req.NamaColorist,
-		NoReg:        req.NoReg,
-		CHL:          req.CHL,
-		SelloutTT:    req.SelloutTT,
-		SelloutRM:    req.SelloutRM,
-		TotalSellout: req.TotalSellout,
+		Tahun:            req.Tahun,
+		Bulan:            req.Bulan,
+		Reg:              req.Reg,
+		Cabang:           req.Cabang,
+		Outlet:           req.Outlet,
+		AreaCover:        req.AreaCover,
+		MosSs:            req.MosSs,
+		NamaColorist:     req.NamaColorist,
+		NoReg:            req.NoReg,
+		TanggalBergabung: req.TanggalBergabung,
+		MasaKerja:        req.MasaKerja,
+		CHL:              req.CHL,
+		Wilayah:          req.Wilayah,
+		TargetSellout:    req.TargetSellout,
+		SelloutTT:        req.SelloutTT,
+		SelloutRM:        req.SelloutRM,
+		Primafix:         req.Primafix,
+		TotalSellout:     req.TotalSellout,
 	}
 
 	return s.repo.Update(ctx, id, sellout)

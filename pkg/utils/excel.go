@@ -227,8 +227,8 @@ func parseFloatFromExcel(numStr string) float64 {
 		} else if (char == '.' || char == ',') && !hasDecimal {
 			// Check if this is decimal separator
 			if (char == decimalChar && i >= len(numStr)-3) ||
-			   (char == '.' && decimalChar == '.' && lastDotPos == i) ||
-			   (char == ',' && decimalChar == ',' && lastCommaPos == i) {
+				(char == '.' && decimalChar == '.' && lastDotPos == i) ||
+				(char == ',' && decimalChar == ',' && lastCommaPos == i) {
 				cleaned += "."
 				hasDecimal = true
 			}
@@ -467,11 +467,18 @@ func ExportSelloutToExcel(selloutData []models.Sellout) (*excelize.File, error) 
 		"Reg",
 		"Cabang",
 		"Outlet",
+		"Area Cover",
+		"MOS/SS",
 		"Nama Colorist",
 		"No Reg",
+		"Tanggal Bergabung",
+		"Masa Kerja",
 		"CHL",
+		"Wilayah",
+		"Target Sellout",
 		"Sellout TT",
 		"Sellout RM",
+		"Primafix",
 		"Total Sellout",
 	}
 
@@ -495,12 +502,19 @@ func ExportSelloutToExcel(selloutData []models.Sellout) (*excelize.File, error) 
 		f.SetCellValue(sheetName, fmt.Sprintf("C%d", row), data.Reg)
 		f.SetCellValue(sheetName, fmt.Sprintf("D%d", row), data.Cabang)
 		f.SetCellValue(sheetName, fmt.Sprintf("E%d", row), data.Outlet)
-		f.SetCellValue(sheetName, fmt.Sprintf("F%d", row), data.NamaColorist)
-		f.SetCellValue(sheetName, fmt.Sprintf("G%d", row), data.NoReg)
-		f.SetCellValue(sheetName, fmt.Sprintf("H%d", row), data.CHL)
-		f.SetCellValue(sheetName, fmt.Sprintf("I%d", row), data.SelloutTT)
-		f.SetCellValue(sheetName, fmt.Sprintf("J%d", row), data.SelloutRM)
-		f.SetCellValue(sheetName, fmt.Sprintf("K%d", row), data.TotalSellout)
+		f.SetCellValue(sheetName, fmt.Sprintf("F%d", row), data.AreaCover)
+		f.SetCellValue(sheetName, fmt.Sprintf("G%d", row), data.MosSs)
+		f.SetCellValue(sheetName, fmt.Sprintf("H%d", row), data.NamaColorist)
+		f.SetCellValue(sheetName, fmt.Sprintf("I%d", row), data.NoReg)
+		f.SetCellValue(sheetName, fmt.Sprintf("J%d", row), data.TanggalBergabung)
+		f.SetCellValue(sheetName, fmt.Sprintf("K%d", row), data.MasaKerja)
+		f.SetCellValue(sheetName, fmt.Sprintf("L%d", row), data.CHL)
+		f.SetCellValue(sheetName, fmt.Sprintf("M%d", row), data.Wilayah)
+		f.SetCellValue(sheetName, fmt.Sprintf("N%d", row), data.TargetSellout)
+		f.SetCellValue(sheetName, fmt.Sprintf("O%d", row), data.SelloutTT)
+		f.SetCellValue(sheetName, fmt.Sprintf("P%d", row), data.SelloutRM)
+		f.SetCellValue(sheetName, fmt.Sprintf("Q%d", row), data.Primafix)
+		f.SetCellValue(sheetName, fmt.Sprintf("R%d", row), data.TotalSellout)
 	}
 
 	f.SetActiveSheet(index)
